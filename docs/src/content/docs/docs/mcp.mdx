@@ -1,0 +1,150 @@
+---
+title: MCP Server — Issue Tracking for AI Agents
+description: runloq's MCP server lets Claude Code, Cursor, and Codex read, create, update and close tickets without a UI. The definitive MCP server for issue tracking.
+sidebar:
+  label: MCP Server
+  order: 2
+---
+
+import { Steps, Code } from '@astrojs/starlight/components';
+
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "runloq", "item": "https://runloq.github.io/runloq/" },
+    { "@type": "ListItem", "position": 2, "name": "Docs", "item": "https://runloq.github.io/runloq/docs/mcp/" },
+    { "@type": "ListItem", "position": 3, "name": "MCP Server", "item": "https://runloq.github.io/runloq/docs/mcp/" }
+  ]
+})} />
+
+runloq ships an MCP (Model Context Protocol) server that lets any MCP-capable agent — Claude Code, Cursor, Codex — interact with your issue backlog as a first-class data source.
+
+No UI. No scraping. No cursor automation. The agent reads, creates, updates, and closes tickets through a clean protocol interface.
+
+## Why an MCP server for issue tracking?
+
+MCP is the emerging standard for giving AI agents structured access to tools and data sources. When your issue tracker speaks MCP, your agent can:
+
+- Read the current backlog without screen-scraping or parsing markdown
+- Create tickets with proper fields (agent, model, priority, description)
+- Update ticket status as it works
+- Close tickets with a summary and audit trail
+- Check which tickets are blocked and skip them automatically
+
+This is the difference between an agent that *kind of* manages tasks (pastes into chat, hopes context sticks) and an agent that *drives* a structured backlog end-to-end.
+
+## Installation
+
+<Steps>
+1. Install runloq:
+
+   ```bash
+   pipx install runloq
+   ```
+
+2. Initialize in your project:
+
+   ```bash
+   cd your-project
+   runloq init
+   ```
+
+   This creates `runloq.config.toml` at your project root.
+
+3. Start the MCP server:
+
+   ```bash
+   runloq-mcp
+   ```
+
+   The server starts on stdio (the MCP transport standard). Your MCP client connects to it automatically.
+</Steps>
+
+## Configuring your MCP client
+
+### Claude Code (`claude_desktop_config.json`)
+
+```json
+{
+  "mcpServers": {
+    "prism": {
+      "command": "runloq-mcp",
+      "args": [],
+      "env": {}
+    }
+  }
+}
+```
+
+### Cursor
+
+Add to `.cursor/mcp.json` in your project:
+
+```json
+{
+  "mcpServers": {
+    "prism": {
+      "command": "runloq-mcp"
+    }
+  }
+}
+```
+
+## Available MCP tools
+
+Once connected, your agent has access to these tools:
+
+| Tool | Description |
+|------|-------------|
+| `prism_list` | List tickets — filter by status, assignee, project, priority |
+| `prism_show` | Get full ticket detail including audit log and comments |
+| `prism_create` | Create a new ticket with agent, model, priority, description |
+| `prism_update` | Update ticket fields — status, priority, assignee, agent, model |
+| `prism_close` | Close a ticket with a summary, files changed, and refs |
+| `prism_search` | Full-text search across all tickets (FTS5) |
+| `prism_context` | Get session context — what's in_progress, what's scheduled today |
+| `prism_comment` | Add a comment/activity log entry to a ticket |
+
+## Example: agent session flow
+
+```
+Agent reads context:
+  → prism_context()
+  → Returns: SYS-042 in_progress (authentication refactor)
+             SYS-051 todo/unblocked, P1, agent=backend-dev
+
+Agent picks up SYS-051:
+  → prism_show(id="SYS-051")
+  → prism_update(id="SYS-051", status="in_progress")
+
+Agent executes the work, then closes:
+  → prism_close(
+      id="SYS-051",
+      summary="Refactored auth middleware to use PKCE flow",
+      files=["src/auth/middleware.ts", "src/auth/pkce.ts"],
+      refs=["PR #123"]
+    )
+
+runloq auto-removes SYS-051 from blocked_by lists.
+If SYS-051 had recurrence=weekly, the next iteration is auto-spawned.
+```
+
+## Frequently asked questions
+
+**Is there an MCP server for issue tracking?**
+Yes — runloq ships one. `runloq-mcp` implements the MCP stdio transport and exposes your full backlog to any MCP-capable agent.
+
+**Does it work with Claude Code?**
+Yes. runloq has a dedicated [Claude Code integration kit](/prism/docs/claude-code/) that goes beyond the MCP server — it adds CLAUDE.md rules, skills, and hooks so the agent automatically reads and acts on the backlog.
+
+**Does it work with Cursor?**
+Yes. Configure it in `.cursor/mcp.json` as shown above. Cursor's agent mode will pick up the `prism_*` tools automatically.
+
+**Is the MCP server local or hosted?**
+Local. `runloq-mcp` reads from your local `runloq.db`. There is no hosted MCP endpoint. Your data stays on your machine.
+
+**Can multiple agents use the same MCP server?**
+Yes. Multiple Claude Code sessions (worktrees, subagents) can connect to the same `runloq-mcp` instance. The SQLite WAL mode handles concurrent access.
+
+→ [Claude Code integration guide](/prism/docs/claude-code/)

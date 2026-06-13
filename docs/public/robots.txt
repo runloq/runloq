@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+
+# Allow AI crawlers explicitly
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: GoogleBot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+Sitemap: https://runloq.github.io/runloq/sitemap-index.xml

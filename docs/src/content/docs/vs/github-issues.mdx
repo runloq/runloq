@@ -1,0 +1,105 @@
+---
+title: runloq vs GitHub Issues — Why runloq for AI Agents
+description: GitHub Issues is built for humans. runloq is built for AI coding agents. Compare agent routing, MCP server, local-first SQLite, and model fields.
+sidebar:
+  label: vs GitHub Issues
+  order: 4
+---
+
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "runloq", "item": "https://runloq.github.io/runloq/" },
+    { "@type": "ListItem", "position": 2, "name": "Comparisons", "item": "https://runloq.github.io/runloq/vs/github-issues/" },
+    { "@type": "ListItem", "position": 3, "name": "vs GitHub Issues", "item": "https://runloq.github.io/runloq/vs/github-issues/" }
+  ]
+})} />
+
+GitHub Issues is excellent. It's where the world's open-source collaboration happens, and it's deeply integrated into pull request workflows. If your team of human engineers needs to triage bugs, review PRs, and comment on code, GitHub Issues is the right tool.
+
+**But GitHub Issues was not built for AI agents.** And that gap matters more than it used to.
+
+## The fundamental difference
+
+GitHub Issues answers: *"What tasks exist?"*
+
+runloq answers: *"What tasks exist, who (which AI specialist) picks each one up, and on which model?"*
+
+That second question is the one AI coding agents actually need.
+
+## Feature comparison
+
+| Feature | runloq | GitHub Issues |
+|---------|-------|---------------|
+| `agent` field — which AI specialist picks this up | ✅ | ❌ |
+| `model` field — opus/sonnet/haiku per ticket | ✅ | ❌ |
+| MCP server (structured agent access) | ✅ | ❌ |
+| Local-first offline SQLite | ✅ | ❌ (cloud-only) |
+| Scheduled + recurring tickets | ✅ | ❌ |
+| Append-only audit log with agent activity | ✅ | Partial (issue events) |
+| Auto-spawn next iteration on close | ✅ | ❌ |
+| `blocked_by` auto-cascade on close | ✅ | Manual |
+| React dashboard with drag-and-drop | ✅ | Basic kanban only |
+| Works offline, no API key | ✅ | ❌ |
+| PR review integration | ❌ (use GitHub) | ✅ |
+| Human team @mentions | ❌ | ✅ |
+| Public issue tracker (OSS) | ❌ | ✅ |
+
+## When to use GitHub Issues instead of runloq
+
+runloq is not a replacement for GitHub Issues for most teams. Use GitHub Issues when:
+
+- You have a human team that comments on issues and reviews PRs
+- You maintain an open-source project where the public files bugs
+- You need tight GitHub PR ↔ issue linkage (auto-close on merge, etc.)
+- Your workflow is driven by pull requests, not agent task execution
+
+**You can use both.** runloq handles agent-driven work; GitHub Issues handles public bugs and human team collaboration.
+
+## When to use runloq instead of GitHub Issues
+
+Use runloq when:
+
+- An AI agent (Claude Code, Cursor, Codex) is doing most of the coding work
+- You want to route tickets to the right AI specialist automatically
+- You want cost-aware model routing (sonnet for debugging, opus for architecture)
+- You want an append-only audit log of what the agent did and why
+- You work offline or value a zero-cloud-dependency setup
+- You need scheduled/recurring tickets that auto-spawn the next iteration
+
+## The `agent` field — what GitHub Issues can't do
+
+In GitHub Issues, a task is assigned to a person. In runloq, a task is assigned to an AI agent persona:
+
+```bash
+runloq create "Refactor auth middleware" \
+  --assignee @claude \
+  --agent backend-dev \   # ← This field doesn't exist in GitHub Issues
+  --model sonnet
+```
+
+The `backend-dev` agent carries a system prompt with specialist expertise in APIs, auth, DB migrations, and business logic. It's a fundamentally different execution environment than the generic `claude` agent.
+
+GitHub Issues has no concept of this. Every "assign to @bot" looks the same.
+
+## The MCP server — what GitHub Issues can't do
+
+GitHub Issues has a REST API and a GraphQL API. These are designed for humans writing integrations — they require token management, handle pagination, and return JSON blobs.
+
+runloq's MCP server is designed for agents. The agent connects to it via stdio, calls `prism_context()` to see what's open, calls `prism_show(id)` for the full brief, and calls `prism_close(id, summary, files)` when done. One protocol, zero configuration per-agent.
+
+GitHub's APIs require your agent to know: the repo URL, how to authenticate, how to paginate, how to map issue numbers to work items. runloq requires: `prism_context()`.
+
+## Frequently asked questions
+
+**Should I use runloq or GitHub Issues for my AI coding agent?**
+If the agent does most of the execution (writing code, running tests, fixing bugs), use runloq. If the backlog is primarily a human-managed bug tracker, use GitHub Issues. Many teams use both: runloq for agent-driven work, GitHub for public issues.
+
+**Can runloq talk to GitHub?**
+Not built-in — runloq is your agent's local backlog, not a GitHub client. If your agent needs GitHub access (PRs, issues), run the official GitHub MCP server alongside runloq.
+
+**Does runloq replace GitHub?**
+No. runloq replaces the "paste tasks into chat" workflow. GitHub stays for PR reviews, CI/CD, and collaboration.
+
+→ [runloq vs Linear](/prism/vs/linear/) · [Why runloq?](/prism/why/) · [Get started](/prism/)

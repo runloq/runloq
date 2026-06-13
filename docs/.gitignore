@@ -1,0 +1,19 @@
+# Astro build output
+dist/
+
+# Node modules
+node_modules/
+
+# Package lock (CI uses npm ci)
+# Keep package-lock.json tracked for reproducible installs
+
+# Astro content cache
+.astro/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Mac
+.DS_Store

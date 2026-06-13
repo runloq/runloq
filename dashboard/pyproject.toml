@@ -1,0 +1,17 @@
+[project]
+name = "tracker-dashboard"
+version = "0.1.0"
+description = "Local FastAPI + Vite SPA dashboard for the tracker"
+requires-python = ">=3.9"
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.32",
+  "pydantic>=2.9",
+  "watchdog>=5.0",
+  "sse-starlette>=2.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3", "pytest-asyncio>=0.24", "httpx>=0.27"]
+
+# pytest config has been moved to the root pyproject.toml

@@ -1,0 +1,6 @@
+# runloq dashboard API dependencies
+fastapi>=0.115
+uvicorn[standard]>=0.32
+pydantic>=2.9
+watchdog>=5.0
+sse-starlette>=2.1

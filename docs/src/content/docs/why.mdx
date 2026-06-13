@@ -1,0 +1,100 @@
+---
+title: Why runloq?
+description: Why runloq is the right issue tracker for AI coding agents like Claude Code and Cursor. Compare to GitHub Issues and Linear. Local-first SQLite, MCP server, agent routing.
+sidebar:
+  label: Why runloq?
+  order: 1
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "runloq", "item": "https://runloq.github.io/runloq/" },
+    { "@type": "ListItem", "position": 2, "name": "Why runloq?", "item": "https://runloq.github.io/runloq/why/" }
+  ]
+})} />
+
+Every issue tracker was designed for humans. runloq was designed for AI agents.
+
+## The problem with existing tools
+
+When an AI coding agent like Claude Code or Cursor needs to manage work, the standard options are:
+
+- **GitHub Issues** — designed for human PR review workflows. No concept of which AI model should run a task. No MCP server. No local-first offline mode.
+- **Linear** — gorgeous UI for human teams. Seat-based pricing. Lives in the cloud. The agent has to fake being a human to use it.
+- **Notion / Jira** — general-purpose task management. Even further from agent-native.
+- **Paste tasks into chat** — completely stateless. Context dies between sessions.
+
+None of these tools answer the question an AI agent actually needs answered: **"Which specialist picks up this ticket, and on which model?"**
+
+## What runloq does differently
+
+runloq adds two fields that no other issue tracker has:
+
+### `agent` — which specialist picks it up
+
+```toml
+# A ticket's agent field routes it to the right Claude Code persona
+agent = "frontend-dev"   # or "backend-dev", "security-engineer", etc.
+```
+
+When the agent reads the backlog, it doesn't just see "tasks." It sees tasks with pre-assigned expertise. A frontend ticket goes to the frontend agent. A security audit goes to the security engineer. This isn't tagging — it's routing.
+
+### `model` — which LLM tier runs it
+
+```toml
+model = "sonnet"   # or "opus" (strategic), "haiku" (mechanical)
+```
+
+Debugging a hard bug on opus costs ~$1.73/turn. The same task on sonnet costs ~$0.43. runloq lets you encode that decision at ticket-creation time, not at execution time. Cheap tasks run cheap. Expensive reasoning runs on the right model.
+
+<Aside type="tip" title="Cost-aware routing">
+A single `opus` session that runs 40 mechanical tasks costs roughly 4× more than routing those same tasks to `sonnet`. runloq makes this a structural decision, not a habit.
+</Aside>
+
+## The local-first advantage
+
+runloq runs entirely on your machine:
+
+- **One SQLite file** — `runloq.db`. Back it up with `cp`. Open it with any SQLite viewer. No vendor lock-in.
+- **No cloud dependency** — works offline, works on a plane, works without an API key.
+- **No seat pricing** — free forever for local use.
+- **Private** — your backlog, your tickets, your audit trail. Nothing leaves your machine unless you deploy the optional hosted edition.
+
+## The MCP advantage
+
+runloq ships an MCP server (`runloq-mcp`) that lets any MCP-capable agent read, create, update, and close tickets without a UI:
+
+```bash
+runloq-mcp   # starts the MCP server
+```
+
+Your agent connects to it and treats the backlog as a first-class data source — not a website it has to scrape or a UI it has to click through. This is the difference between an agent that *manages* tasks and an agent that *executes* a structured backlog.
+
+## Why not just use a text file?
+
+A `TODO.txt` is stateless. runloq has:
+
+- **Append-only audit log** — every change is recorded. What did the agent do on Tuesday? Check the log.
+- **Scheduled + recurring tickets** — auto-spawn the next iteration on close. Daily standups, weekly reviews, monthly invoicing passes — all automated.
+- **Blocked-by relationships** — the agent sees which tickets are blocked and skips them automatically.
+- **Snapshots** — point-in-time state saves for recovery after compaction.
+
+## Honest limitations
+
+runloq is **not** for human teams. It has no comments UI, no @mention system, no Slack integration for humans. If your team of 5 engineers needs to comment on pull requests and assign tasks to each other, use Linear or GitHub Issues — they're excellent at that.
+
+runloq is for you and your agents. If Claude Code is doing 70% of the coding work, your backlog should be designed for Claude Code.
+
+## Get started
+
+```bash
+pipx install runloq
+cd your-project
+runloq init
+```
+
+→ [MCP server setup](/prism/docs/mcp/) · [Claude Code integration](/prism/docs/claude-code/)

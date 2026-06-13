@@ -1,0 +1,15 @@
+{
+  "name": "prism-docs",
+  "type": "module",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.32.0",
+    "astro": "^5.9.0",
+    "sharp": "^0.33.5"
+  }
+}

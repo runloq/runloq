@@ -1,0 +1,126 @@
+[build-system]
+requires = ["setuptools>=70", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+# Dist name: runloq (avoids collision with
+# Stoplight Prism + PrismJS on PyPI). The Python import package stays `prism`.
+name = "runloq"
+version = "0.1.0"
+description = "runloq — local-first issue tracker built for AI coding agents (SQLite + dashboard + MCP)"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.11"
+authors = [
+  { name = "runloq" }
+]
+keywords = ["runloq", "issue-tracking", "ai-agents", "cli", "sqlite", "backlog", "mcp"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: GNU Affero General Public License v3",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: System :: Monitoring",
+]
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.32",
+  "watchdog>=5.0",
+  "pydantic>=2.9",
+  "sse-starlette>=2.1",
+  "mcp>=1.0",          # MCP server ships by default — runloq is agent-native
+]
+
+[project.scripts]
+runloq       = "prism.prism:main"
+runloq-serve = "prism.dashboard.api.main:run"
+runloq-mcp   = "prism.mcp.server:main"
+
+[project.urls]
+Homepage   = "https://github.com/runloq/runloq"
+Source     = "https://github.com/runloq/runloq"
+Changelog  = "https://github.com/runloq/runloq/blob/main/CHANGELOG.md"
+
+[project.optional-dependencies]
+# MCP ships by default now (it's in core dependencies — runloq is agent-native).
+# This extra is kept as a no-op so `pip install "runloq[mcp]"` still resolves.
+mcp = []
+dev = [
+  "pytest>=8.3",
+  "pytest-asyncio>=0.24",
+  "httpx>=0.27",
+  "ruff>=0.4",
+]
+
+# ---------------------------------------------------------------------------
+# Setuptools packaging configuration
+#
+# Layout: the repo root IS the `prism` Python package.  It contains:
+#   __init__.py  prism.py  core.py  config.py
+#   dashboard/   (sub-package: FastAPI API + pre-built React SPA)
+#
+# Dev-only files at root (check_new.py, conftest.py, setup.py) are excluded
+# from the wheel via the custom build_py_filtered class in setup.py.
+#
+# package-dir maps dotted package names → source directories.
+# packages lists every package explicitly (auto-discovery doesn't work well
+# with this flat layout where the root dir is also the top-level package).
+# ---------------------------------------------------------------------------
+
+[tool.setuptools]
+packages = [
+  "prism",
+  "prism.mcp",
+  "prism.dashboard",
+  "prism.dashboard.api",
+  "prism.dashboard.api.routes",
+]
+package-dir = {"prism" = ".", "prism.mcp" = "mcp", "prism.dashboard" = "dashboard", "prism.dashboard.api" = "dashboard/api", "prism.dashboard.api.routes" = "dashboard/api/routes"}
+
+[tool.setuptools.package-data]
+# Bundle the pre-built SPA so StaticFiles can find it after `pip install`.
+# Maintainers: run `cd dashboard/web && npm install && npm run build`
+# BEFORE running `python -m build` — dashboard/web/dist/ is gitignored but
+# must exist at wheel-build time. See README for the full release workflow.
+"prism" = [
+  "dashboard/web/dist/**",
+  "dashboard/web/dist/**/*",
+]
+
+[tool.pytest.ini_options]
+# `tests/` — pure unit tests, no external deps beyond stdlib (127 tests).
+# `dashboard/api/tests/` — FastAPI integration tests; require fastapi, httpx,
+# watchdog, pytest-asyncio in the environment.  Run with:
+#   python -m pytest tests/ dashboard/api/tests/
+# or the default testpaths below if all deps are present.
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+# Minimal ruff config — default rules, targeted ignores only.
+# Extend/tighten in future passes; don't break existing style wholesale.
+target-version = "py311"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "W"]
+ignore = [
+  "E501",  # line too long — handled by line-length above, formatter owns this
+  "E702",  # statement ends with a semicolon — prevalent in existing style, fix incrementally
+  "E401",  # multiple imports on one line — prevalent in existing style, fix incrementally
+  "E711",  # comparison to None — SQLAlchemy patterns use == None
+  "E712",  # comparison to True/False — common in filter expressions
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests are more liberal — imports often after sys.path manipulation
+"tests/*" = ["E402"]
+"tests/**/*" = ["E402"]
+"dashboard/api/tests/*" = ["E402"]
+"dashboard/api/tests/**/*" = ["E402"]

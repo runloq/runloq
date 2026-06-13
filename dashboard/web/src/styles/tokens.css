@@ -1,0 +1,131 @@
+/* Design tokens — runloq design system v3.
+   Indigo accent (H270). Neutrals carry a faint cool tint (H265, very low chroma)
+   so the UI reads intentional rather than flat clinical gray. WCAG AA everywhere.
+   Theme managed via .dark class on <html>. See index.html flash-prevention script. */
+
+:root {
+  /* Surfaces — faint cool tint; white cards pop against an off-white canvas */
+  --bg:           oklch(98.5% 0.003 265);
+  --surface:      oklch(100% 0 0);
+  --surface-2:    oklch(96.8% 0.004 265);
+  --surface-3:    oklch(93.5% 0.006 265);
+
+  /* Text */
+  --fg:           oklch(21% 0.015 265);
+  --muted:        oklch(47% 0.012 265);
+
+  /* Borders */
+  --border:       oklch(91% 0.005 265);
+  --border-strong: oklch(84% 0.008 265);
+
+  /* Accent — indigo, interactive actions only (buttons, focus rings, active states) */
+  --accent:        oklch(45% 0.19 270);
+  --accent-fg:     oklch(99% 0 0);
+  --accent-subtle: oklch(95.5% 0.04 270);
+
+  /* Priority — four distinct hues + lightness curves, WCAG AA on bg/surface */
+  --p0: oklch(40% 0.22 25);   /* crimson — critical */
+  --p1: oklch(43% 0.18 55);   /* amber — high */
+  --p2: oklch(38% 0.14 240);  /* azure — medium */
+  --p3: oklch(42% 0.06 160);  /* sage — low */
+
+  /* Status — named independently so they can be tuned without touching priority */
+  --status-active:     oklch(45% 0.19 270);  /* indigo = accent */
+  --status-scheduled:  oklch(43% 0.18 55);   /* amber (same value as p1, independent name) */
+  --status-done:       oklch(47% 0.012 265); /* muted */
+
+  /* Projects — hues ≥60° apart from each other and from accent (H270) */
+  --proj-sys: oklch(48% 0.18 300);  /* violet */
+  --proj-arc: oklch(46% 0.16 140);  /* forest green */
+  --proj-ver: oklch(50% 0.16 75);   /* gold */
+  --proj-pur: oklch(46% 0.16 200);  /* sky-teal */
+  --proj-duc: oklch(48% 0.16 340);  /* rose */
+  --proj-frg: oklch(52% 0.20 30);   /* orange (saturated, fiery) */
+  --proj-par: oklch(50% 0.19 235);  /* electric blue */
+  --proj-atl: oklch(44% 0.17 170);  /* teal-green — lowered L 52→44% for WCAG AA on surface-2 */
+
+  --shadow-modal: 0 16px 48px -16px oklch(20% 0.03 265 / 0.18),
+                  0 4px 12px -4px oklch(20% 0.03 265 / 0.10);
+}
+
+/* Dark mode — applied via .dark class on <html> (toggle + localStorage).
+   Flash prevention script in index.html applies this synchronously on load. */
+.dark {
+  /* Surfaces — near-black with a cool tint; clear layer separation for depth */
+  --bg:           oklch(15% 0.01 265);
+  --surface:      oklch(18.5% 0.012 265);
+  --surface-2:    oklch(22.5% 0.014 265);
+  --surface-3:    oklch(26.5% 0.016 265);
+
+  /* Text — muted bumped to 62% so secondary text stays readable on dark */
+  --fg:           oklch(96% 0.005 265);
+  --muted:        oklch(63% 0.012 265);
+
+  /* Borders */
+  --border:       oklch(28% 0.012 265);
+  --border-strong: oklch(37% 0.016 265);
+
+  /* Accent */
+  --accent:        oklch(70% 0.17 270);
+  --accent-fg:     oklch(15% 0.02 270);
+  --accent-subtle: oklch(24% 0.06 270);
+
+  /* Priority (all overridden — high L for readability on dark bg) */
+  --p0: oklch(67% 0.21 25);
+  --p1: oklch(74% 0.17 55);
+  --p2: oklch(70% 0.15 240);
+  --p3: oklch(66% 0.07 160);
+
+  /* Status */
+  --status-active:     oklch(70% 0.17 270);
+  --status-scheduled:  oklch(74% 0.17 55);
+  --status-done:       oklch(60% 0.012 265);
+
+  /* Projects (bumped lightness for dark bg legibility) */
+  --proj-sys: oklch(73% 0.17 300);
+  --proj-arc: oklch(71% 0.16 140);
+  --proj-ver: oklch(75% 0.16 75);
+  --proj-pur: oklch(73% 0.16 200);
+  --proj-duc: oklch(73% 0.16 340);
+  --proj-frg: oklch(75% 0.20 30);
+  --proj-par: oklch(74% 0.17 235);
+  --proj-atl: oklch(75% 0.17 170);
+
+  --shadow-modal: 0 16px 48px -16px oklch(0% 0 0 / 0.60),
+                  0 4px 12px -4px oklch(0% 0 0 / 0.40);
+}
+
+/* Fallback for no-JS users: honour system preference even without the .dark class.
+   These values mirror .dark exactly so behaviour is identical either way. */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --bg:           oklch(15% 0.01 265);
+    --surface:      oklch(18.5% 0.012 265);
+    --surface-2:    oklch(22.5% 0.014 265);
+    --surface-3:    oklch(26.5% 0.016 265);
+    --fg:           oklch(96% 0.005 265);
+    --muted:        oklch(63% 0.012 265);
+    --border:       oklch(28% 0.012 265);
+    --border-strong: oklch(37% 0.016 265);
+    --accent:        oklch(70% 0.17 270);
+    --accent-fg:     oklch(15% 0.02 270);
+    --accent-subtle: oklch(24% 0.06 270);
+    --p0: oklch(67% 0.21 25);
+    --p1: oklch(74% 0.17 55);
+    --p2: oklch(70% 0.15 240);
+    --p3: oklch(66% 0.07 160);
+    --status-active:     oklch(70% 0.17 270);
+    --status-scheduled:  oklch(74% 0.17 55);
+    --status-done:       oklch(60% 0.012 265);
+    --proj-sys: oklch(73% 0.17 300);
+    --proj-arc: oklch(71% 0.16 140);
+    --proj-ver: oklch(75% 0.16 75);
+    --proj-pur: oklch(73% 0.16 200);
+    --proj-duc: oklch(73% 0.16 340);
+    --proj-frg: oklch(75% 0.20 30);
+    --proj-par: oklch(74% 0.17 235);
+    --proj-atl: oklch(75% 0.17 170);
+    --shadow-modal: 0 16px 48px -16px oklch(0% 0 0 / 0.60),
+                    0 4px 12px -4px oklch(0% 0 0 / 0.40);
+  }
+}

@@ -1,0 +1,11 @@
+# OSS default config — mirrors what `runloq init` generates for a fresh install.
+# Used by tests that verify config-driven validation works out-of-the-box.
+
+[projects]
+TASK = "Tasks"
+
+[assignees]
+list = ["claude", "me"]
+
+[models]
+list = ["opus", "sonnet", "haiku"]

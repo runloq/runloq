@@ -1,0 +1,55 @@
+name: Accessibility (axe-core)
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  a11y:
+    name: "axe-core contrast & a11y audit"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dashboard dependencies
+        working-directory: dashboard/web
+        run: npm ci
+
+      - name: Build SPA
+        working-directory: dashboard/web
+        run: npm run build
+
+      - name: Serve SPA and run axe-core audit
+        working-directory: dashboard/web
+        run: |
+          # Install serve and axe-core CLI
+          npm install --no-save serve @axe-core/cli
+
+          # Start static server in background
+          npx serve dist -p 5190 &
+          SERVER_PID=$!
+
+          # Wait for server to be ready
+          for i in $(seq 1 20); do
+            curl -sf http://localhost:5190 > /dev/null 2>&1 && break
+            sleep 1
+          done
+
+          # Run axe-core — exit non-zero on any violation
+          npx axe http://localhost:5190 \
+            --include "#root" \
+            --tags wcag2a,wcag2aa,wcag21aa \
+            --reporter cli
+
+          STATUS=$?
+          kill $SERVER_PID || true
+          exit $STATUS
