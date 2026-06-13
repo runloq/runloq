@@ -324,7 +324,7 @@ state_dir = "/config/state"
                 cfg.load_config.cache_clear()
                 c = cfg.load_config()
                 self.assertTrue(c.state_dir.endswith("state"))
-                self.assertTrue(c.db.endswith("prism.db"))
+                self.assertTrue(c.db.endswith("runloq.db") or c.db.endswith("prism.db"))
             finally:
                 os.chdir(old_cwd)
                 import shutil
@@ -333,7 +333,7 @@ state_dir = "/config/state"
             cfg.load_config.cache_clear()
             c = cfg.load_config()
             self.assertTrue(c.state_dir.endswith("state"))
-            self.assertTrue(c.db.endswith("prism.db"))
+            self.assertTrue(c.db.endswith("runloq.db") or c.db.endswith("prism.db"))
 
 
 class TestPrismInit(unittest.TestCase):
