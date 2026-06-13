@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 # Dist name: runloq (avoids collision with
 # Stoplight Prism + PrismJS on PyPI). The Python import package stays `prism`.
 name = "runloq"
-version = "0.1.0"
+version = "0.1.1"
 description = "runloq — local-first issue tracker built for AI coding agents (SQLite + dashboard + MCP)"
 readme = "README.md"
 license = { file = "LICENSE" }

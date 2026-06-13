@@ -3,6 +3,14 @@
 Kept current at every milestone; newest first.
 
 ---
+## 0.1.1
+
+- **Fix:** `runloq init` now scaffolds `runloq.config.toml` + `state/` into the
+  current directory (like `git init`) instead of the installed package directory.
+- **Fix:** `runloq serve` honours the `[dashboard]` host/port from the config
+  (the `RUNLOQ_HOST` / `RUNLOQ_PORT` env vars still override).
+
+---
 ## 0.1.0 — Initial public release
 
 First public release of runloq. Local-first issue tracker built for AI coding agents (Claude Code, Cursor, Codex). Includes:
