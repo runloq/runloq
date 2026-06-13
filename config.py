@@ -376,10 +376,10 @@ list = ["opus", "sonnet", "haiku"]
 # dir = ".claude/agents"
 
 [paths]
-# Where Prism stores its SQLite database.
+# Where runloq stores its SQLite database.
 # Relative paths are resolved from this file's directory.
-# state_dir = "state"          # directory containing runloq.db
-# db = "state/runloq.db"        # explicit DB path (overrides state_dir)
+state_dir = "state"            # directory containing runloq.db (./state next to this file)
+# db = "state/runloq.db"       # explicit DB path (overrides state_dir)
 
 [dashboard]
 host = "127.0.0.1"

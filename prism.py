@@ -783,10 +783,9 @@ def cmd_init(db, args):
 
     # 1. Config file
     # If RUNLOQ_CONFIG (or legacy PRISM_CONFIG) is set, respect it (the user knows
-    # where they want it). Demo with no explicit config env → write to the current
-    # directory and point this process at it, so the isolated demo never reads or
-    # writes a real package-level config/DB. Plain init with no env → package dir
-    # (the canonical "clone → init → run" location).
+    # where they want it). Otherwise scaffold in the CURRENT directory (like
+    # `git init` / `npm init`) — never in site-packages — and repoint this process
+    # at it so the config, DB, and state/ all land in the user's project.
     env_cfg = _os.environ.get("RUNLOQ_CONFIG") or _os.environ.get("PRISM_CONFIG")
     repointed = False
     if env_cfg:
@@ -797,7 +796,7 @@ def cmd_init(db, args):
             cfg_path.parent.mkdir(parents=True, exist_ok=True)
             cfg_path.write_text(template, encoding="utf-8")
             print(f"Created config: {cfg_path}")
-    elif demo:
+    else:
         cfg_path = Path("runloq.config.toml").resolve()
         if cfg_path.exists():
             print(f"Config already exists (skipped): {cfg_path}")
@@ -806,24 +805,17 @@ def cmd_init(db, args):
             print(f"Created config: {cfg_path}")
         _os.environ["RUNLOQ_CONFIG"] = str(cfg_path)
         repointed = True
-    else:
-        cfg_path = _PKG_DIR / "runloq.config.toml"
-        if not cfg_path.exists():
-            cfg_path.write_text(template, encoding="utf-8")
-            print(f"Created config: {cfg_path}")
-        else:
-            print(f"Config already exists (skipped): {cfg_path}")
 
-    # If we repointed RUNLOQ_CONFIG at a freshly-written demo config, refresh the
-    # cached config and reopen the DB at the demo location (the `db` main() handed
-    # us was opened against the pre-demo config).
+    # If we repointed RUNLOQ_CONFIG at a freshly-written config, refresh the cached
+    # config and reopen the DB at the new location (the `db` main() handed us was
+    # opened against the pre-init config).
     if repointed:
         _load_config.cache_clear()
         Path(_cfg().state_dir).mkdir(parents=True, exist_ok=True)
         DB_PATH = _cfg().db
         db = get_db()
         init_db(db)
-        migrate_db(db)  # the demo DB needs the same migrations main() ran on the original
+        migrate_db(db)  # the new DB needs the same migrations main() ran on the original
 
     # 2. State directory
     state_dir = Path(_cfg().state_dir)

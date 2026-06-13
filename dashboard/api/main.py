@@ -177,15 +177,21 @@ app = create_app()
 def run() -> None:
     """Console-script entry point for `prism-serve` and `prism serve`.
 
-    Reads host/port from the environment (RUNLOQ_HOST / RUNLOQ_PORT) so that
-    container deployments can override without editing config files.
+    Host/port come from the [dashboard] section of runloq.config.toml; the
+    RUNLOQ_HOST / RUNLOQ_PORT env vars override them (handy for containers) without
+    editing the config file.
 
     Prints the dashboard URL so the caller knows where to open it.
     """
     import uvicorn
 
-    host = os.environ.get("RUNLOQ_HOST", "127.0.0.1")
-    port = int(os.environ.get("RUNLOQ_PORT", "3002"))
+    try:
+        from config import load_config as _load_config
+    except ModuleNotFoundError:
+        from prism.config import load_config as _load_config
+    cfg = _load_config()
+    host = os.environ.get("RUNLOQ_HOST", cfg.dashboard_host)
+    port = int(os.environ.get("RUNLOQ_PORT", cfg.dashboard_port))
     url = f"http://{host}:{port}"
     print(f"runloq dashboard → {url}")
     uvicorn.run(
