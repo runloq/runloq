@@ -78,6 +78,9 @@ jobs:
           fi
 
       - name: Publish to TestPyPI (dry run)
+        # Best-effort: only works if a TestPyPI pending publisher is configured.
+        # Non-blocking so the production publish still runs when it isn't.
+        continue-on-error: true
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
