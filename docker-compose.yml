@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  dashboard:
+    build: .
+    ports:
+      - "127.0.0.1:3002:3002"
+    volumes:
+      # Mount ./state so the SQLite DB persists on the host.
+      # Run `mkdir -p state` before `docker compose up` if the directory
+      # doesn't exist yet; or let runloq create it via `python3 prism.py init`.
+      - ./state:/app/state
+    environment:
+      TRACKER_STATE_DIR: /app/state
+      TRACKER_DB: /app/state/runloq.db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:3002/api/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s

@@ -1,0 +1,110 @@
+---
+title: runloq vs Linear — Why runloq for AI Coding Agents
+description: Linear is built for human teams. runloq is built for AI coding agents. Compare local-first SQLite, MCP server, agent routing, model fields, and pricing.
+sidebar:
+  label: vs Linear
+  order: 5
+---
+
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "runloq", "item": "https://runloq.github.io/runloq/" },
+    { "@type": "ListItem", "position": 2, "name": "Comparisons", "item": "https://runloq.github.io/runloq/vs/linear/" },
+    { "@type": "ListItem", "position": 3, "name": "vs Linear", "item": "https://runloq.github.io/runloq/vs/linear/" }
+  ]
+})} />
+
+Linear is one of the best project management tools ever built for humans. Fast, opinionated, beautiful. If your team of engineers wants a structured sprint workflow with cycle management, roadmaps, and Slack notifications, Linear is excellent.
+
+**But Linear was built for human product teams, not AI coding agents.** The gap is fundamental, not cosmetic.
+
+## The fundamental difference
+
+Linear answers: *"What is the team working on, in what sprint, assigned to which person?"*
+
+runloq answers: *"What is the agent backlog, routed to which AI specialist, running on which model, with full audit trail?"*
+
+The second question is meaningless to Linear. There's no `model` field, no `agent` field, no concept of "which LLM tier should execute this ticket."
+
+## Feature comparison
+
+| Feature | runloq | Linear |
+|---------|-------|--------|
+| `agent` field — which AI specialist | ✅ | ❌ |
+| `model` field — opus/sonnet/haiku | ✅ | ❌ |
+| MCP server (structured agent access) | ✅ | ❌ |
+| Local-first SQLite, works offline | ✅ | ❌ (cloud-only) |
+| Free forever (local) | ✅ | ❌ (seat pricing) |
+| Scheduled + recurring tickets | ✅ | Partial (cycles) |
+| Append-only agent audit log | ✅ | Partial (issue history) |
+| Auto-spawn next iteration on close | ✅ | ❌ |
+| React dashboard | ✅ (included) | ✅ (better for humans) |
+| Roadmaps + cycles | ❌ | ✅ |
+| Team @mentions + notifications | ❌ | ✅ |
+| Slack/GitHub PR integration (human) | Partial | ✅ (native) |
+| Enterprise SSO + audit | ❌ | ✅ |
+
+## When to use Linear instead of runloq
+
+Linear wins for:
+
+- Human product teams (PMs, designers, engineers) doing sprint planning
+- Companies with compliance needs (SOC 2, audit logs for humans)
+- Teams that need roadmaps, OKRs, and cycle management
+- Orgs already paying for Linear and not doing agent-driven work
+
+## When to use runloq instead of Linear
+
+runloq wins when:
+
+- You're a solo developer or small team where AI agents do most of the coding
+- You want cost-aware model routing — mechanical tasks on sonnet, strategic work on opus
+- You need an offline-first, zero-cloud-dependency backlog
+- Linear's per-seat pricing doesn't fit a single-developer workflow
+- You want your agent to pick up and close tickets without any UI
+
+## The cost argument
+
+Linear charges per seat. For a solo developer using Claude Code as the "second engineer," you're paying for a seat that the AI agent will never use.
+
+runloq is free forever for local use. The agent reads the backlog via MCP or CLI. No seat. No monthly billing. No API rate limits.
+
+## The model-routing argument
+
+When Linear assigns a task to a human engineer, it doesn't need to know whether that engineer is "junior" or "senior" — the human figures it out.
+
+When runloq assigns a task to an AI agent, the model matters enormously:
+
+- `haiku` — trivial mechanical work: rename, format, boilerplate. ~$0.05/turn.
+- `sonnet` — debugging, refactoring, implementing a clear plan. ~$0.43/turn.
+- `opus` — architecture, design reviews, hard reasoning. ~$1.73/turn.
+
+A debugging session incorrectly assigned to `opus` costs 4× more than on `sonnet`, with no quality improvement. runloq lets you encode this decision at ticket-creation time. Linear has no equivalent concept.
+
+## The local-first argument
+
+Linear is cloud-only. Your backlog lives on Linear's servers. If Linear is down, you can't see your tasks. If you're on a plane, you can't check what's blocked.
+
+runloq is one SQLite file. Open it with any SQLite viewer. Back it up with `cp`. Run it on a plane. The agent can read the backlog with zero network connectivity.
+
+## Can I use both?
+
+Yes — run runloq as your agent's local backlog and keep Linear for the human team. If your agent needs Linear access, run the official Linear MCP server alongside runloq; runloq stays focused on being the agent-driven backlog.
+
+## Frequently asked questions
+
+**Is runloq a Linear alternative?**
+For solo developers using AI agents, yes. For human product teams, no — Linear is still better for that use case.
+
+**Does runloq have roadmaps?**
+No. runloq is a task tracker, not a roadmap tool. If you need quarterly planning and OKRs, use Linear for that layer and runloq for agent-driven execution.
+
+**Does Linear have an MCP server?**
+Not yet (as of 2026). Linear has a GraphQL API, but no MCP server designed for AI agent consumption. runloq's MCP server is specifically built for the agent protocol.
+
+**What's the migration path from Linear to runloq?**
+Run `prism import-linear` (coming in v0.2) to pull your open issues from Linear via the GraphQL API and import them as runloq tickets. Or start fresh — runloq tickets are simpler to create than Linear issues.
+
+→ [runloq vs GitHub Issues](/prism/vs/github-issues/) · [Why runloq?](/prism/why/) · [Get started](/prism/)

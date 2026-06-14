@@ -1,0 +1,81 @@
+---
+title: runloq — AI Agent Issue Tracker
+description: Local-first SQLite issue tracker built for AI coding agents (Claude Code, Cursor, Codex). Every ticket carries an agent field and model field so your backlog is directly executable.
+template: splash
+hero:
+  title: The backlog your AI coding agent reads, picks up, and closes itself.
+  tagline: runloq is a local-first issue tracker built for AI coding agents. Every ticket carries an <code>agent</code> field (which specialist picks it up) and a <code>model</code> field (opus/sonnet/haiku), so the backlog is directly executable — not just a list.
+  actions:
+    - text: Get started
+      link: /prism/why/
+      icon: right-arrow
+      variant: primary
+    - text: GitHub
+      link: https://github.com/runloq/runloq
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <Card title="Agent-native model" icon="puzzle">
+    Every ticket carries an `agent` slug (which Claude Code agent persona handles it) and a `model` field (opus/sonnet/haiku). The backlog encodes *how* work gets done, not just what exists.
+  </Card>
+  <Card title="MCP server" icon="rocket">
+    `runloq-mcp` lets any MCP-capable agent read, create, update and close tickets without a UI. Works with Claude Code, Cursor, and Codex out of the box.
+  </Card>
+  <Card title="Local-first, offline-first" icon="laptop">
+    One SQLite file. No cloud dependency. No seat pricing. Private, instant, and works on a plane. `pipx install runloq` and you're done.
+  </Card>
+  <Card title="Scheduled & recurring tickets" icon="setting">
+    Auto-spawn the next iteration on close. Scheduled tickets surface at the right time via the SessionStart hook — your agent picks them up automatically.
+  </Card>
+</CardGrid>
+
+## What makes runloq different from every other issue tracker?
+
+Every other issue tracker was designed for humans. runloq was designed for AI agents.
+
+When you open Linear or GitHub Issues, you see a list of tasks a *person* will eventually click through and work on. runloq's backlog is **executable**: an agent reads it, knows exactly which specialist picks up the ticket and which LLM tier runs it, executes the work, and closes it with a full audit trail — autonomously.
+
+### Install in 60 seconds
+
+```bash
+pipx install runloq
+cd your-project
+runloq init          # scaffolds runloq.config.toml
+runloq serve         # starts the React dashboard
+```
+
+### Then connect your agent
+
+```bash
+# MCP server (Claude Code / Cursor / Codex)
+runloq-mcp
+
+# Claude Code integration kit — one-command install
+bash integrations/claude-code/install.sh
+```
+
+## Who is runloq for?
+
+**Solo developers** using Claude Code or Cursor who want a structured backlog their agent can actually drive — not a GitHub Issues board they have to manage manually.
+
+**AI-first teams** (early) building agent-driven workflows where task routing, model selection, and audit trails matter.
+
+If you paste tasks into a chat window and hope the agent remembers context between sessions, runloq is the structure you're missing.
+
+## Compare to alternatives
+
+| Feature | runloq | GitHub Issues | Linear |
+|---------|-------|---------------|--------|
+| `agent` field (which AI specialist) | ✅ | ❌ | ❌ |
+| `model` field (opus/sonnet/haiku) | ✅ | ❌ | ❌ |
+| MCP server | ✅ | ❌ | ❌ |
+| Local-first SQLite | ✅ | ❌ | ❌ |
+| Scheduled + recurring tickets | ✅ | ❌ | Partial |
+| Append-only audit log | ✅ | Partial | Partial |
+| Free forever (local) | ✅ | ✅ | ❌ |
+
+→ [Why not GitHub Issues?](/prism/vs/github-issues/) · [Why not Linear?](/prism/vs/linear/)

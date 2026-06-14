@@ -1,0 +1,15 @@
+# Test fixture config for dashboard/api/tests.
+# Provides a known, stable project/assignee/model set so tests are
+# deterministic regardless of the developer's ambient runloq.config.toml.
+
+[projects]
+SYS = "System"
+ARC = "Archive"
+VER = "Versioning"
+TST = "Testing"
+
+[assignees]
+list = ["claude", "me", "alice", "bob"]
+
+[models]
+list = ["opus", "sonnet", "haiku"]

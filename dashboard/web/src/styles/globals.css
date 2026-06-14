@@ -1,0 +1,138 @@
+/* Self-hosted web fonts — no Google CDN dependency (SYS-390).
+   WOFF2 files vendored to /public/fonts/ via @fontsource packages (MIT). */
+@font-face {
+  font-family: "Geist";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/geist-400.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Geist";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/geist-500.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Geist";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/geist-600.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/jetbrains-mono-400.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/jetbrains-mono-500.woff2") format("woff2");
+}
+
+@import "./tokens.css";
+@import "tailwindcss";
+
+@theme {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-subtle: var(--accent-subtle);
+  --color-p0: var(--p0);
+  --color-p1: var(--p1);
+  --color-p2: var(--p2);
+  --color-p3: var(--p3);
+  --color-status-active: var(--status-active);
+  --color-status-scheduled: var(--status-scheduled);
+  --color-status-done: var(--status-done);
+  --color-proj-sys: var(--proj-sys);
+  --color-proj-arc: var(--proj-arc);
+  --color-proj-ver: var(--proj-ver);
+  --color-proj-pur: var(--proj-pur);
+  --color-proj-duc: var(--proj-duc);
+  --color-proj-frg: var(--proj-frg);
+  --color-proj-par: var(--proj-par);
+  --color-proj-atl: var(--proj-atl);
+
+  /* Shadcn token aliases (Tailwind v4 --color-* form).
+     Vendored components use shadcn vocabulary; these map to the dashboard
+     palette so classes like bg-background, text-muted-foreground etc. render
+     correctly against local design tokens. */
+  --color-background: var(--surface);
+  --color-foreground: var(--fg);
+  --color-popover: var(--surface);
+  --color-popover-foreground: var(--fg);
+  --color-card: var(--surface);
+  --color-card-foreground: var(--fg);
+  --color-primary: var(--accent);
+  --color-primary-foreground: var(--accent-fg);
+  --color-secondary: var(--surface-2);
+  --color-secondary-foreground: var(--fg);
+  --color-muted-foreground: var(--muted);
+  --color-accent-foreground: var(--accent-fg);
+  --color-destructive: var(--p0);
+  --color-destructive-foreground: oklch(99% 0 0);
+  --color-input: var(--border);
+  --color-ring: var(--accent);
+
+  --font-sans: "Geist", -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, Consolas,
+    monospace;
+}
+
+/* Webfonts: Geist + JetBrains Mono self-hosted (SYS-390).
+   @font-face blocks at the top of this file; files in /public/fonts/. */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-radius: 4px;
+}
+
+/* The command palette input lives inside a bordered Command container that
+   already provides the visual focus indicator — suppress the global ring
+   so it doesn't bleed through the container's border-radius. */
+[cmdk-input]:focus-visible {
+  outline: none;
+}
+
+/* Sonner (toaster) inherits our tokens */
+[data-sonner-toaster] {
+  --normal-bg: var(--surface);
+  --normal-text: var(--fg);
+  --normal-border: var(--border-strong);
+}

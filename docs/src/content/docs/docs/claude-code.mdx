@@ -1,0 +1,174 @@
+---
+title: Claude Code Integration Guide
+description: How to connect runloq to Claude Code so the agent automatically reads your backlog, picks up tickets, routes them by model, and closes them with an audit trail.
+sidebar:
+  label: Claude Code
+  order: 3
+---
+
+import { Steps, Aside } from '@astrojs/starlight/components';
+
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "runloq", "item": "https://runloq.github.io/runloq/" },
+    { "@type": "ListItem", "position": 2, "name": "Docs", "item": "https://runloq.github.io/runloq/docs/claude-code/" },
+    { "@type": "ListItem", "position": 3, "name": "Claude Code", "item": "https://runloq.github.io/runloq/docs/claude-code/" }
+  ]
+})} />
+
+runloq ships a **Claude Code integration kit** at `integrations/claude-code/` that goes beyond the MCP server. It wires runloq into Claude Code's entire lifecycle: session startup, work tracking, agent routing, and session teardown.
+
+After installing, Claude Code automatically:
+- Reads your open backlog on session start and proposes the top tickets
+- Routes tickets to the right agent persona (frontend-dev, backend-dev, security-engineer, etc.)
+- Picks the right LLM model (opus / sonnet / haiku) per ticket
+- Closes tickets with a summary, files changed, and audit trail on session end
+- Auto-commits `runloq.db` on every stop event so state is never lost
+
+## One-command install
+
+<Steps>
+1. Install runloq:
+
+   ```bash
+   pipx install runloq
+   ```
+
+2. Initialize in your project:
+
+   ```bash
+   cd your-project
+   runloq init
+   ```
+
+3. Install the Claude Code integration kit:
+
+   ```bash
+   bash integrations/claude-code/install.sh
+   ```
+
+   This installs:
+   - `CLAUDE.md` addition — runloq is set as the tracker, rules for ticket lifecycle
+   - `.claude/rules/issues.md` — how to create, pick up, and close tickets
+   - `.claude/hooks/` — SessionStart (context fetch), SessionEnd + Stop (auto-commit)
+   - `.claude/skills/` — `/issue`, `/work`, `/hub` slash commands
+   - `.claude/agents/` — specialist agent personas (frontend-dev, backend-dev, etc.)
+</Steps>
+
+## How it works
+
+### Session startup
+
+Every time you start Claude Code, a `SessionStart` hook fires:
+
+```bash
+# .claude/hooks/session-startup.sh
+python3 prism/prism.py context
+```
+
+This outputs:
+- What's currently `in_progress` (pick up where you left off)
+- `@claude`-assigned tickets that are unblocked and ready to work
+- Scheduled tickets due today or tomorrow
+- A suggested next action
+
+Claude Code reads this and proposes the top-priority work at the start of every session. You don't have to ask "what should I work on?" — it tells you.
+
+### Ticket routing by agent
+
+When you (or Claude) create a ticket with an `agent` field:
+
+```bash
+runloq create "Refactor auth middleware" \
+  --assignee @claude \
+  --agent backend-dev \
+  --model sonnet \
+  --priority P1
+```
+
+Claude Code's `/work SYS-042` command dispatches a subagent of type `backend-dev` running on `sonnet`. The right specialist picks up the right ticket at the right cost — automatically.
+
+<Aside type="tip" title="Cost optimization">
+Setting `model = "sonnet"` on mechanical tickets (debugging, refactoring, codemods) vs `model = "opus"` on strategic work (architecture, design reviews) typically reduces LLM costs by 60-75% without quality loss.
+</Aside>
+
+### Session teardown
+
+On every `Stop` event, a hook auto-commits `runloq.db`:
+
+```bash
+# .claude/hooks/session-teardown.sh (Tier 1)
+git add prism/state/runloq.db
+git commit -m "chore(prism): auto-snapshot [session-end]" --no-verify
+```
+
+You never lose a ticket that was created or updated mid-session. Even if you close the terminal abruptly, the DB is committed.
+
+## Agent personas
+
+The integration kit ships specialist agent personas in `.claude/agents/`:
+
+| Agent slug | Speciality |
+|-----------|-----------|
+| `frontend-dev` | React, Next.js, TanStack, components, a11y |
+| `backend-dev` | APIs, auth, DB migrations, business logic |
+| `security-engineer` | Vulnerability assessment, OWASP, auth review |
+| `architect` | ADRs, threat modeling, multi-tenant design |
+| `qa` | Testing strategy, regression prevention |
+| `performance-analyst` | Core Web Vitals, profiling, flame graphs |
+| `dba` | DB schema, migrations, query optimization |
+| `seo-specialist` | Keyword research, schema markup, technical SEO |
+| `devops` | CI/CD, Docker, deploy strategies, runbooks |
+
+Each persona carries its own Iron Laws, domain expertise, and strategic posture. A `frontend-dev` subagent has fundamentally different behavior than a `security-engineer` — not just different tools, but different judgment calls.
+
+## Slash commands
+
+After install, these slash commands work in Claude Code:
+
+| Command | What it does |
+|---------|-------------|
+| `/issue` | Create, list, update, close tickets — full CRUD |
+| `/work SYS-042` | Pick up a ticket — dispatches the right agent+model, starts timer, marks in_progress |
+| `/hub` | Full capability map — what can runloq do right now? |
+
+## Claude Code project management — the full workflow
+
+Here's what a typical day looks like with runloq + Claude Code:
+
+```
+Morning session start:
+  Claude Code reads context → proposes SYS-051 (P1, backend-dev, sonnet)
+
+You type: /work SYS-051
+  → runloq marks in_progress
+  → Dispatches backend-dev subagent on sonnet model
+  → Subagent reads the full ticket description (the brief)
+  → Executes, tests, commits
+
+Subagent closes: runloq close SYS-051 "summary" --files src/auth.ts --refs "PR #45"
+  → Audit log recorded
+  → If SYS-051 had blocked_by=[SYS-050], that blocker auto-removed from SYS-050
+  → Session teardown auto-commits runloq.db
+
+Next session:
+  Claude Code reads updated context → SYS-050 is now unblocked, proposes it next
+```
+
+## Frequently asked questions
+
+**How do I give Claude Code a backlog?**
+Install runloq, run `runloq init`, install the Claude Code kit with `bash integrations/claude-code/install.sh`. Claude Code will read your backlog on every session start.
+
+**Does runloq work with Claude Code's built-in task management?**
+Yes — runloq replaces Claude Code's native "Tasks" with a persistent, structured backlog. The integration kit hooks into Claude Code's lifecycle events (SessionStart, Stop, SessionEnd) so nothing requires manual intervention.
+
+**Can I use runloq without the integration kit?**
+Yes. You can use the CLI directly (`runloq create`, `runloq list`, `runloq board`) and the MCP server independently. The Claude Code kit just adds the automation layer on top.
+
+**What's the difference between the MCP server and the integration kit?**
+The MCP server gives Claude Code structured *access* to the backlog. The integration kit gives Claude Code *habits* around the backlog — session-start context, auto-routing, auto-teardown. Use both for the full experience.
+
+→ [MCP server setup](/prism/docs/mcp/) · [Why runloq?](/prism/why/)

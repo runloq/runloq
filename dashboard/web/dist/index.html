@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Flash prevention: apply .dark class synchronously before any CSS renders.
+         Reads localStorage.theme ('dark'|'light'). Falls back to prefers-color-scheme.
+         Must be the first script in <head> — no defer/async. -->
+    <script>
+      (function () {
+        var s = localStorage.getItem('runloq.theme');
+        if (s === 'dark' || (!s && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        } else if (s === 'light') {
+          // Explicit light preference: add .light so :root:not(.light) media
+          // query fallback doesn't re-apply dark tokens.
+          document.documentElement.classList.add('light');
+        }
+      })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Preload critical font weights to avoid FOUT (SYS-390: self-hosted, no Google CDN) -->
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/geist-400.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/geist-500.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/jetbrains-mono-400.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/jetbrains-mono-500.woff2" crossorigin />
+    <title>runloq</title>
+    <meta name="description" content="Local-first issue tracker for AI coding agents" />
+    <meta property="og:title" content="runloq · issue tracker" />
+    <meta property="og:description" content="Local-first issue tracker for AI coding agents" />
+    <meta property="og:image" content="/.github/assets/hero-board.png" />
+    <script type="module" crossorigin src="/assets/index-BN5rON-_.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-N1XQwO0t.css">
+  </head>
+  <body class="bg-bg text-fg">
+    <div id="root"></div>
+  </body>
+</html>

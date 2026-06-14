@@ -1,0 +1,52 @@
+# runloq — Issue Tracker for AI Coding Agents
+
+> runloq is a local-first SQLite issue tracker designed for AI coding agents (Claude Code, Cursor, Codex). Every ticket carries an `agent` field (which specialist picks it up) and a `model` field (opus/sonnet/haiku), so the backlog is directly executable by your agent. Includes an MCP server, React dashboard, and a Claude Code integration kit.
+
+## What makes it agent-native
+
+- `agent` field: which Claude Code agent persona handles the ticket (frontend-dev, backend-dev, security-engineer, etc.)
+- `model` field: which LLM tier runs it (opus / sonnet / haiku) — encodes cost-aware routing at ticket-creation time
+- MCP server (`runloq-mcp`): agents read, create, update and close tickets without a UI
+- Scheduled + recurring tickets: auto-spawn the next iteration on close with full context link
+- Append-only event/audit log: full trace of what the agent did and why
+- `blocked_by` auto-cascade: closing a ticket removes it from every dependent ticket's blockers
+
+## Install
+
+```
+pipx install runloq
+cd your-project
+runloq init
+runloq serve        # React dashboard at http://localhost:3002
+runloq-mcp          # MCP server on stdio
+```
+
+## Claude Code integration
+
+One-command install of the full integration kit (CLAUDE.md rules, hooks, skills, agent personas):
+
+```
+bash integrations/claude-code/install.sh
+```
+
+After install, Claude Code automatically reads the backlog on session start, routes tickets to the right agent+model, and auto-commits runloq.db on session end.
+
+## Key links
+
+- GitHub: https://github.com/runloq/runloq
+- MCP docs: https://runloq.github.io/runloq/docs/mcp/
+- Claude Code integration: https://runloq.github.io/runloq/docs/claude-code/
+- Why runloq?: https://runloq.github.io/runloq/why/
+
+## Alternatives comparison
+
+- vs GitHub Issues: no `agent` field, no `model` field, no MCP server, cloud-only, no local-first SQLite
+- vs Linear: designed for human product teams, seat-based pricing, cloud-only, no agent execution model, no MCP server
+- vs plain text files: stateless, no audit log, no scheduled tickets, no agent routing
+
+## Use cases
+
+- Solo developer using Claude Code as a "second engineer" — the backlog is what the agent reads each session
+- Agent-driven debugging: create a ticket with `agent=backend-dev, model=sonnet`, run `/work SYS-042`, agent executes and closes
+- Recurring tasks: weekly code reviews, daily standup prep, monthly invoicing — auto-spawn the next iteration on close
+- Multi-agent coordination: orchestrator creates tickets with different agent slugs, dispatches subagents per ticket
