@@ -65,7 +65,7 @@ Every time you start Claude Code, a `SessionStart` hook fires:
 
 ```bash
 # .claude/hooks/session-startup.sh
-python3 prism/prism.py context
+runloq context
 ```
 
 This outputs:
@@ -171,4 +171,4 @@ Yes. You can use the CLI directly (`runloq create`, `runloq list`, `runloq board
 **What's the difference between the MCP server and the integration kit?**
 The MCP server gives Claude Code structured *access* to the backlog. The integration kit gives Claude Code *habits* around the backlog — session-start context, auto-routing, auto-teardown. Use both for the full experience.
 
-→ [MCP server setup](/prism/docs/mcp/) · [Why runloq?](/prism/why/)
+→ [MCP server setup](/runloq/docs/mcp/) · [Why runloq?](/runloq/why/)
