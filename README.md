@@ -2,6 +2,8 @@
 
 **The backlog your AI coding agent reads, picks up, and closes itself.**
 
+📖 **Docs:** [runloq.github.io/runloq](https://runloq.github.io/runloq/)
+
 runloq is a local-first issue tracker built *for* AI coding agents (Claude Code,
 Cursor, Codex). It's a real backlog your agent can drive end to end: read what's
 open, pick up a ticket, route it to the right model, execute, and close it with a
