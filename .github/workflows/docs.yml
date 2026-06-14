@@ -1,9 +1,11 @@
 name: Deploy runloq docs to GitHub Pages
 
 on:
-  # Auto-deploy is enabled once GitHub Pages is turned on for the repo
-  # (Settings -> Pages -> Source: GitHub Actions). Until then, run manually via
-  # the Actions tab so an un-configured Pages target doesn't red the repo.
+  push:
+    branches:
+      - main
+    paths:
+      - "docs/**"
   workflow_dispatch:
 
 permissions:

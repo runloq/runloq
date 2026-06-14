@@ -136,7 +136,7 @@ If SYS-051 had recurrence=weekly, the next iteration is auto-spawned.
 Yes — runloq ships one. `runloq-mcp` implements the MCP stdio transport and exposes your full backlog to any MCP-capable agent.
 
 **Does it work with Claude Code?**
-Yes. runloq has a dedicated [Claude Code integration kit](/prism/docs/claude-code/) that goes beyond the MCP server — it adds CLAUDE.md rules, skills, and hooks so the agent automatically reads and acts on the backlog.
+Yes. runloq has a dedicated [Claude Code integration kit](/runloq/docs/claude-code/) that goes beyond the MCP server — it adds CLAUDE.md rules, skills, and hooks so the agent automatically reads and acts on the backlog.
 
 **Does it work with Cursor?**
 Yes. Configure it in `.cursor/mcp.json` as shown above. Cursor's agent mode will pick up the `prism_*` tools automatically.
@@ -147,4 +147,4 @@ Local. `runloq-mcp` reads from your local `runloq.db`. There is no hosted MCP en
 **Can multiple agents use the same MCP server?**
 Yes. Multiple Claude Code sessions (worktrees, subagents) can connect to the same `runloq-mcp` instance. The SQLite WAL mode handles concurrent access.
 
-→ [Claude Code integration guide](/prism/docs/claude-code/)
+→ [Claude Code integration guide](/runloq/docs/claude-code/)

@@ -45,6 +45,6 @@ export default defineConfig({
     }),
   ],
   site: "https://runloq.github.io",
-  base: "/prism",
+  base: "/runloq",
   trailingSlash: "always",
 });
