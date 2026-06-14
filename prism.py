@@ -771,7 +771,7 @@ def cmd_init(db, args):
         runloq serve
     """
     global DB_PATH
-    from config import CONFIG_TEMPLATE, _PKG_DIR
+    from config import CONFIG_TEMPLATE
     import os as _os
 
     demo = bool(args.get("demo"))

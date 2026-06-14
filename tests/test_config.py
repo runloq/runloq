@@ -698,7 +698,6 @@ class TestTomllibLoadAPI(unittest.TestCase):
             cfg.load_config.cache_clear()
             original_load = tomllib.load
             load_calls = []
-            loads_calls = []
             def _spy_load(fh):
                 load_calls.append(True)
                 return original_load(fh)
